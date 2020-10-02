@@ -23,6 +23,36 @@ int wordCounter(char *str, int start){
     return counter;
 }
 
+int numCounter(char *str, int start){
+    int counter = 0;
+    int i = start;
+    int j=0;
+    while (isdigit(str[i]) != 0 || isxdigit(str[i]) != 0 ){
+        if ((char)str[i]=='e'){
+            if(str[i+1]!='\0') {
+                i=j;
+                j++;
+                if ((char)str[i]=='+' || (char)str[i]=='-') {
+                    counter++;
+                    i++;
+                }
+            }
+        }else if((char)str[i]=='0'){
+            if(str[i+1]!='\0') {
+                i = j;
+                j++;
+                if ((char)str[i]=='x'|| (char)str[i]=='X'){
+                    counter++;
+                    i++;
+                }
+            }
+        }
+        i++;
+        counter++;
+    }
+    return counter;
+}
+
 char* getSubstring(char const *str, int start, int end){
 
     int size = end - start;
@@ -165,7 +195,14 @@ void printArgumentsTest(char *str){
         printf("%c", str[i]);
     }
     printf("\n");
+    printf("\nTESTNUM\n");
+    int digitcounter=numCounter(str,0);
+    printf("%d\n", digitcounter);
+
 }
+
+
+
 
 int main( int argc, char **argv) {
 
@@ -214,7 +251,7 @@ int main( int argc, char **argv) {
             i=n+i-1; // Relocate the iterator to next location
             free(word); // Free the memory
 
-        } else if ( isdigit( (int)str[i] )){
+        }else if ( (isdigit( (int)str[i] )) ){
             printf("Number %c\n", str[i]);
 
 
