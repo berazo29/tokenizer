@@ -3,6 +3,28 @@
 #include <string.h>
 #include <ctype.h>
 
+int wordCounter(char *str, int start){
+    int counter = 0;
+    int i = start;
+    while (isalnum(str[i]) != 0 && !isspace( (int)isalnum(str[i]))){
+        i++;
+        counter++;
+    }
+    return counter;
+}
+
+char* getSubstring(char *str, int start, int end){
+
+    int size = end - start;
+    char *tmp = (char *)malloc(size*sizeof(char *));
+    int k=0;
+    for (int i = start; i < end; ++i) {
+        tmp[k] = str[i];
+        k++;
+    }
+    return tmp;
+}
+
 char* isOperator(char str) {
     switch (str) {
         case '(':
@@ -129,9 +151,17 @@ char* isLongOperator(char* str) {
     return "bad token";
 }
 
+void printArgumentsTest(char *str){
+    printf("\nTEST\n");
+    for (int i = 0; i < strlen(str); ++i) {
+        printf("%c", str[i]);
+    }
+    printf("\n");
+}
+
 int main( int argc, char **argv) {
 
-    //File name from arguments
+    //Check the argument input
     if (argc != 2 ){
         printf("Incorrect number of arguments\n");
         return EXIT_SUCCESS;
@@ -144,16 +174,51 @@ int main( int argc, char **argv) {
     // Allocate memory and init
     unsigned int size = strlen(argv[1]);
     char *str = (char *)malloc(size*sizeof(char));
+
+    // Copy input to a local string
     strcpy(str, argv[1]);
 //    printf("%s", str);
+
+    // Traverse the string
     for (int i = 0; i < size; ++i) {
-        if ( ispunct(str[i])!= 0){
-            char temp = str[i];
-            printf("%s\n", isOperator(temp));
-            // Run the func for symbols
+
+        //Check for a word
+        if ( (int)isalpha(str[i]) ){
+
+            int n = wordCounter(str, i);
+
+            // Handle one character
+            if (n == 1){
+                printf("word: \"%c\"\n", str[i]);
+                i++;
+                continue;
+            }
+            //printf("SIZE %d\n",n);
+            char *word = getSubstring(str,i,i+n);
+            printf("word: \"%s\"\n", word);
+            i=n+i-1; // Relocate the iterator to next location
+            free(word); // Free the memory
+
+        } else if ( isdigit( (int)str[i] )){
+            printf("Number %c\n", str[i]);
+
+
+        } else if ( ispunct((str[i])) ){
+
+            char *operator;
+            operator = isOperator(str[i]);
+            printf("%s: \"%c\"\n", operator, str[i]);
+
+        } else if ( isspace(str[i]) ){
+
         }
 
 
     }
+
+
+    //For testing only
+    printArgumentsTest(str);
+
     return EXIT_SUCCESS;
 }
