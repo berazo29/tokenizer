@@ -3,6 +3,16 @@
 #include <string.h>
 #include <ctype.h>
 
+int symbolCounter(char *str, int start){
+    int counter = 0;
+    int i = start;
+    while (ispunct(str[i]) != 0 && counter < 3){
+        i++;
+        counter++;
+    }
+    return counter;
+}
+
 int wordCounter(char *str, int start){
     int counter = 0;
     int i = start;
@@ -13,7 +23,7 @@ int wordCounter(char *str, int start){
     return counter;
 }
 
-char* getSubstring(char *str, int start, int end){
+char* getSubstring(char const *str, int start, int end){
 
     int size = end - start;
     char *tmp = (char *)malloc(size*sizeof(char *));
@@ -190,11 +200,18 @@ int main( int argc, char **argv) {
             // Handle one character
             if (n == 1){
                 printf("word: \"%c\"\n", str[i]);
-                i++;
                 continue;
             }
             //printf("SIZE %d\n",n);
             char *word = getSubstring(str,i,i+n);
+
+            // Check if sizeof exist and continue;
+            if (strcmp(word,"sizeof") == 0){
+                printf("sizeof: \"%s\"\n", word);
+                i=n+i-1; // Relocate the iterator to next location
+                free(word);
+                continue;
+            }
             printf("word: \"%s\"\n", word);
             i=n+i-1; // Relocate the iterator to next location
             free(word); // Free the memory
@@ -204,10 +221,37 @@ int main( int argc, char **argv) {
 
 
         } else if ( ispunct((str[i])) ){
-
+            int n = symbolCounter(str,i);
+            //printf("SIZE %d\n",n);
+            // Check for match in the n <= 3
             char *operator;
-            operator = isOperator(str[i]);
-            printf("%s: \"%c\"\n", operator, str[i]);
+            char *word = getSubstring(str,i,i+n);
+            //printf("TEST: %s\n", word);
+            if ( n == 3 ){
+                if ( strcmp(isLongOperator(word),"bad token") != 0 ){
+                    operator = isLongOperator(word);
+                    printf("%s: \"%s\"\n", operator, word);
+                    i = i+2;
+                    free(word);
+                    continue;
+                }
+                n--;
+                word = getSubstring(str,i,i+n);
+            }
+            if ( n == 2 ){
+                if ( strcmp(isLongOperator(word),"bad token") != 0 ){
+                    operator = isLongOperator(word);
+                    printf("%s: \"%s\"\n", operator, word);
+                    i = i+1;
+                    free(word);
+                    continue;
+                }
+                free(word);
+            }
+            if ( strcmp(isOperator(str[i]),"bad token") != 0 ){
+                operator = isOperator(str[i]);
+                printf("%s: \"%c\"\n", operator, str[i]);
+            }
 
         } else if ( isspace(str[i]) ){
 
@@ -219,6 +263,7 @@ int main( int argc, char **argv) {
     //For testing only
     printArgumentsTest(str);
     free(str);
+    printf("%s",isLongOperator("!="));
 
     return EXIT_SUCCESS;
 }
