@@ -216,9 +216,9 @@ int main( int argc, char **argv) {
 
     }
 
-
     //For testing only
     printArgumentsTest(str);
+    free(str);
 
     return EXIT_SUCCESS;
 }
