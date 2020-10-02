@@ -114,11 +114,37 @@ char* isLongOperator(char* str) {
             return "shift left equals";
         }
     }else if(strlen(str)==2){
-        if(str[1]=='>'){
-            if(strcmp(str,">>")==0){
+        if(str[1]=='>') {
+            if (strcmp(str, ">>") == 0) {
                 return "shift right";
-            }else if(strcmp(str,"->")==0){
+            } else if (strcmp(str, "->") == 0) {
                 return "structure pointer";
+            }
+        }else if(str[1]=='=') {
+            if (strcmp(str, "==") == 0) {
+                return "equality test";
+            } else if (strcmp(str, "!=") == 0) {
+                return "inequality test";
+            } else if (strcmp(str, "<=") == 0) {
+                return "less than or equal test";
+            } else if (strcmp(str, ">=") == 0) {
+                return "greater than or equal test";
+            } else if (strcmp(str, "+=") == 0) {
+                return "plus equals";
+            } else if (strcmp(str, "-=") == 0) {
+                return "minus equals";
+            } else if (strcmp(str, "*=") == 0) {
+                return "times equals";
+            } else if (strcmp(str, "/=") == 0) {
+                return "divide equals";
+            } else if (strcmp(str, "%=") == 0) {
+                return "mod equals";
+            } else if (strcmp(str, "&=") == 0) {
+                return "bitwise AND equals";
+            } else if (strcmp(str, "|=") == 0) {
+                return "bitwise OR equals";
+            } else if (strcmp(str, "^=") == 0) {
+                return "bitwise XOR equals";
             }
         }else if(strcmp(str,"<<")==0){
             return "shift left";
@@ -130,32 +156,6 @@ char* isLongOperator(char* str) {
             return "logical OR";
         }else if(strcmp(str,"&&")==0){
             return "logical AND";
-        }
-    }else if(str[1]=='='){
-        if(strcmp(str,"==")==0){
-            return "equality test";
-        }else if(strcmp(str,"!=")==0){
-            return "inequality test";
-        }else if(strcmp(str,"<=")==0){
-            return "less than or equal test";
-        }else if(strcmp(str,">=")==0){
-            return "greater than or equal test";
-        }else if(strcmp(str,"+=")==0){
-            return "plus equals";
-        }else if(strcmp(str,"-=")==0){
-            return "minus equals";
-        }else if(strcmp(str,"*=")==0){
-            return "times equals";
-        }else if(strcmp(str,"/=")==0){
-            return "divide equals";
-        }else if(strcmp(str,"%=")==0){
-            return "mod equals";
-        }else if(strcmp(str,"&=")==0){
-            return "bitwise AND equals";
-        }else if(strcmp(str,"|=")==0){
-            return "bitwise OR equals";
-        }else if(strcmp(str,"^=")==0) {
-            return "bitwise XOR equals";
         }
     }
     return "bad token";
