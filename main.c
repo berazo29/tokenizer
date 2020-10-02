@@ -105,9 +105,7 @@ char* isOperator(char str) {
 }
 
 char* isLongOperator(char* str) {
-    if(strlen(str)>3){
-        return "sizeof";
-    }else if(strlen(str)==3){
+    if(strlen(str)==3){
         if(strcmp(str,">>=")==0){
             return "shift right equals";
         }else if(strcmp(str,"<<=")==0){
