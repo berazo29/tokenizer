@@ -467,7 +467,8 @@ int main( int argc, char **argv) {
                     continue;
                 }
                 n--;
-                word = getSubstring(str,i,i+n);
+                word = realloc(word, i+n);
+                //word = getSubstring(str,i,i+n);
             }
             if ( n == 2 ){
                 if ( strcmp(isLongOperator(word),"bad token") != 0 ){
@@ -477,7 +478,6 @@ int main( int argc, char **argv) {
                     free(word);
                     continue;
                 }
-                free(word);
             }
             if ( strcmp(isOperator(str[i]),"bad token") != 0 ){
                 operator = isOperator(str[i]);
