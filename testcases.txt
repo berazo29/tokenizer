@@ -55,25 +55,50 @@ structure pointer: ->
 equality test: ==
 decimal integer: 0942
 
+Tokenizer string: 0x4356abdcuyt
+hexadecimal integer: "0x4356abdc"
+word: "uyt"
+
 Tokenizer string: hello!===
 word: hello
 inequality test: !=
 equality test: ==
 
-Tokenizer string: h3.14e-10
-word: h
+Tokenizer string: 3.14e-10
 floating point: 3.14e-10
 
+Tokenizer string: h3.14e-10
+word: "h3"
+structure member: "."
+decimal integer: "14"
+word: "e"
+minus/subtract operator: "-"
+decimal integer: "10"
+
 Tokenizer string: h3.14e10ello
-word: h
+word: "h3"
+structure member: "."
+decimal integer: "14"
+word: "e10ello"
+
+Tokenizer string: 3.14e10
 floating point: 3.14e10
-word: ello
 
 Tokenizer string: h3.14e+10
-word: h
+word: "h3"
+structure member: "."
+decimal integer: "14"
+word: "e"
+addition: "+"
+decimal integer: "10"
+
+Tokenizer string: 3.14e+10
 floating point: 3.14e+10
 
 Tokenizer string: 12.73296.023670
 floating point: 12.73296
 structure member: .
 octal integer: 023670
+
+Tokenizer string: 0
+octal integer: "0"
