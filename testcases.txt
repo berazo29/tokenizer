@@ -1,0 +1,79 @@
+Tokenizer string: blank string
+Empty string, no tokens to parse
+Tokenizer string: hello
+word: hello
+
+Tokenizer string: hello everyone out there
+word: hello
+word: everyone
+word: out
+word: there
+
+Tokenizer string: string [] tes0
+word: string
+left bracket: [
+right bracket: ]
+word: tes
+Decimal integer: 0
+
+Tokenizer string: 0x70 (tokenizer)
+hexadecimal: 0x70
+left parenthesis: (
+word: tokenizer
+right parenthesis: )
+
+Tokenizer string: 0x70test
+hexadecimal integer: 0x70
+word: test
+
+Tokenizer string: 0345test <>
+octal integer: 0345
+word: test
+less than: <
+greater than: >
+
+Tokenizer string: 3.14test 0x
+floating point: 3.14
+word: test
+octal: 0
+word: x
+
+Tokenizer string: .123 t
+structure member: .
+decimal integer: 123
+word: t
+
+Tokenizer string: str1ng +++
+word: str1ng
+increment: ++
+addition: +
+
+Tokenizer string: 0x4356abdc a6->== 0942
+hexadecimal integer: 0x4356abdc
+word: a6
+structure pointer: ->
+equality test: ==
+decimal integer: 0942
+
+Tokenizer string: hello!===
+word: hello
+inequality test: !=
+equality test: ==
+
+Tokenizer string: h3.14e-10
+word: h
+floating point: 3.14e-10
+
+Tokenizer string: h3.14e10ello
+word: h
+floating point: 3.14e10
+word: ello
+
+Tokenizer string: h3.14e+10
+word: h
+floating point: 3.14e+10
+
+Tokenizer string: 12.73296.023670
+floating point: 12.73296
+structure member: .
+octal integer: 023670
