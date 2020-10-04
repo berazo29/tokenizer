@@ -41,7 +41,7 @@ int decimalFloatCounter(char *str, int start){
     if ( str[i] == '.' ){
         return 0;
     }
-    while ( isdigit( ( (int)str[i]) ) != 0 || str[i] == '.' || tolower( (int)str[i] ) == 'e' || str[i] == '-' ){
+    while ( isdigit( ( (int)str[i]) ) != 0 || str[i] == '.' || tolower( (int)str[i] ) == 'e' || str[i] == '-' || str[i] == '+'){
 
         if ( str[i] == '.'){
             dot++;
@@ -49,7 +49,7 @@ int decimalFloatCounter(char *str, int start){
         if ( tolower( (int)str[i] ) == 'e' ){
             exp++;
         }
-        if ( str[i] == '-' ){
+        if ( str[i] == '-'|| str[i] == '+' ){
             sign++;
         }
         if ( dot == 2 || exp == 2 || sign == 2 ){
@@ -82,11 +82,11 @@ int decimalFloatCounter(char *str, int start){
     }
 
     // When last number finish in e- don't include them
-    if (tolower( (int)str[i-2] ) == 'e' && str[i-1] == '-'){
+    if (tolower( (int)str[i-2] ) == 'e' && (str[i-1] == '-'|| str[i] == '+') ){
         counter = counter-2;
     }
     // When last number end in e or - don't include them
-    else if (tolower( (int)str[i-1] ) == 'e' || str[i-1] == '-'){
+    else if (tolower( (int)str[i-1] ) == 'e' || str[i-1] == '-' || str[i] == '+'){
         counter--;
     }
 
@@ -100,8 +100,8 @@ int hexadecimalCounter(char *str, int start){
     if ( strlen(str) < 3){
         return 0;
     }
-    if (str[start] == '0' && tolower((int)str[start+1]) == 'x'){
-        i = start+2;
+    if (str[i] == '0' && tolower((int)str[i+1]) == 'x'){
+        i = i+2;
         counter=2;
 
         while ( isxdigit(((int)str[i])) != 0 ){
@@ -129,7 +129,7 @@ int symbolCounter(char *str, int start){
 int wordCounter(char *str, int start){
     int counter = 0;
     int i = start;
-    while (isalnum(str[i]) != 0 && !isspace( (int)isalnum(str[i])) ){
+    while (isalnum(str[i]) != 0 ){
         i++;
         counter++;
     }
@@ -195,6 +195,7 @@ char* isNumberType(int numberType){
 char* getSubstring(char const *str, int start, int end){
 
     int size = end - start;
+
     char *tmp = (char *)malloc(size*sizeof(char *));
     int k=0;
     for (int i = start; i < end; ++i) {
@@ -334,10 +335,6 @@ void printArgumentsTest(char *str){
     for (int i = 0; i < strlen(str); ++i) {
         printf("%c", str[i]);
     }
-    printf("\n");
-    char *word = "m099";
-    int x = octalCounter(word,0);
-    printf("STRING:%s    c:%c    Size:%d\n",word, word[x], x);
 }
 
 int main( int argc, char **argv) {
@@ -374,10 +371,10 @@ int main( int argc, char **argv) {
                     int posEnd = hexadecimalCounter(str,i);
                     char *operator;
                     operator = isNumberType(2);
-                    char *floatNum = getSubstring(str,i,i+posEnd);
-                    printf("%s: \"%s\"\n", operator, floatNum);
+                    char *hexNum = getSubstring(str,i,i+posEnd);
+                    printf("%s: \"%s\"\n", operator, hexNum);
                     i = i+posEnd-1; // Relocate iterator location
-                    free(floatNum);
+                    free(hexNum);
                 }
                 // Check for Float point
                 else if ( decimalFloatCounter(str, i) ){
@@ -391,12 +388,12 @@ int main( int argc, char **argv) {
                 }
                 // Check for octal integer
                 else if ( octalCounter(str, i) ){
-                    int posEnd = octalCounter(str,i);
+                    int posEnd = octalCounter(str,i)+i;
                     char *operator;
                     operator = isNumberType(4);
-                    char *octalNum = getSubstring(str,i,i+posEnd);
+                    char *octalNum = getSubstring(str,i,posEnd+1);
                     printf("%s: \"%s\"\n", operator, octalNum);
-                    i = i+posEnd-1; // Relocate iterator location
+                    i = posEnd-1; // Relocate iterator location
                     free(octalNum);
 
                 } else{
@@ -409,8 +406,7 @@ int main( int argc, char **argv) {
                     i = i+posEnd-1; // Relocate iterator location
                     free(decimalNum);
                 }
-            }
-            else if ( isdigit( (int)str[i]) ) {
+            }else if ( isdigit( (int)str[i]) ) {
                 //printf("Integer %c\n", str[i]);
                 if ( decimalFloatCounter(str, i) ){
                     int posEnd = decimalFloatCounter(str,i);
@@ -445,7 +441,7 @@ int main( int argc, char **argv) {
             char *word = getSubstring(str,i,i+n);
 
             // Check if sizeof exist and continue;
-            if (strcmp(word,"sizeof") == 0){
+            if ( strcmp(word,"sizeof") == 0 ){
                 printf("sizeof: \"%s\"\n", word);
                 i=n+i-1; // Relocate the iterator to next location
                 free(word);
@@ -493,8 +489,7 @@ int main( int argc, char **argv) {
         }
     }
 
-    //For testing only
-    printArgumentsTest(str);
+    //Deallocate memory for string input
     free(str);
 
     return EXIT_SUCCESS;
