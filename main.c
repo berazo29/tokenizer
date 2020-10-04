@@ -136,42 +136,6 @@ int wordCounter(char *str, int start){
     return counter;
 }
 
-// Count all types of number symbols
-int numberTypeCounter( char *str, int start){
-    int counter = 0;
-    int i = start;
-    while (ishexnumber((int)str[i]) != 0 || tolower((int)str[i]) == 'x' || str[i] == '.' || str[i] == '-'){
-        i++;
-        counter++;
-    }
-    return counter;
-}
-
-// Doc return 0 if none invalid type, 1 Integer, 2 HexInteger, 3 float, 4 Octal
-int numberType(char *str, int start, int end){
-    int i = start;
-    // One character;
-    if (i == end ){
-        if (str[i] == '8' || str[i] == '9'){
-            return 1;
-        } else if ( isdigit((int)str[i] != 0)){
-            return 4;
-        }
-    }
-    for (int j = start+1; j < end; ++j) {
-        if (tolower((int)str[i]) == 'x'){
-            return 2;
-        }
-        if (str[j] == '.'){
-            return 3;
-        }
-        if ( str[start] == '0' && ( (int)(str[j]-'0') < 8 ) ){
-            return 4;
-        }
-    }
-    return 0;
-}
-
 char* isNumberType(int numberType){
     switch (numberType) {
         case 1:
@@ -360,12 +324,9 @@ int main( int argc, char **argv) {
     for (int i = 0; i < size; ++i) {
 
         if ( isdigit( (int)str[i] )) {
-            //printf("TEST Number %c\n", str[i]);
-
-            //printf("TEST SIZE NUMBER %d\n", n);
 
             if (str[i] == '0') {
-                //printf("TEST Zero %c\n", str[i]);
+
                 // Check for hexadecimal integer
                 if ( hexadecimalCounter(str, i) ){
                     int posEnd = hexadecimalCounter(str,i);
