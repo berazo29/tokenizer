@@ -3,6 +3,119 @@
 #include <string.h>
 #include <ctype.h>
 
+int octalCounter(char *str, int start){
+    int counter = 0;
+    int i = start;
+
+    // Handle one char
+    if (str[start] != '0'){
+        return 0;
+    }
+    while (isdigit(((int)str[i])) != 0 ){
+        if ( str[i] == '8' || str[i] == '9' ){
+            return 0;
+        }
+        i++;
+        counter++;
+    }
+    return counter;
+}
+
+int decimalCounter(char *str, int start){
+    int counter = 0;
+    int i = start;
+    while (isdigit(((int)str[i])) != 0){
+        i++;
+        counter++;
+    }
+    return counter;
+}
+
+int decimalFloatCounter(char *str, int start){
+    int counter = 0;
+    int dot = 0;
+    int exp = 0;
+    int sign = 0;
+    int i = start;
+    // Handle the dot in the first position
+    if ( str[i] == '.' ){
+        return 0;
+    }
+    while ( isdigit( ( (int)str[i]) ) != 0 || str[i] == '.' || tolower( (int)str[i] ) == 'e' || str[i] == '-' ){
+
+        if ( str[i] == '.'){
+            dot++;
+        }
+        if ( tolower( (int)str[i] ) == 'e' ){
+            exp++;
+        }
+        if ( str[i] == '-' ){
+            sign++;
+        }
+        if ( dot == 2 || exp == 2 || sign == 2 ){
+            break;
+        }
+
+        // Check for correct sign precedence: dot then exponent then sign
+        if ( dot < exp || dot < sign || exp < sign){
+            break;
+        }
+        i++;
+        counter++;
+    }
+    int integer = 0;
+    // Check if the number is integer and return 0
+    for (int j = start; j < i; ++j) {
+        if (isdigit( (int)str[j] )){
+            integer++;
+        }
+        if (integer == counter){
+            return 0;
+        }
+        // Check for .e in the string since it will make the number an integer
+        if ( str[j]== '.' && tolower((int)str[j+1]) == 'e'){
+            return 0;
+        }
+    }
+    if ( str[i-1] == '.' ){
+        counter = 0;
+    }
+
+    // When last number finish in e- don't include them
+    if (tolower( (int)str[i-2] ) == 'e' && str[i-1] == '-'){
+        counter = counter-2;
+    }
+    // When last number end in e or - don't include them
+    else if (tolower( (int)str[i-1] ) == 'e' || str[i-1] == '-'){
+        counter--;
+    }
+
+    return counter;
+}
+
+int hexadecimalCounter(char *str, int start){
+    int counter = 0;
+    int i = start;
+
+    if ( strlen(str) < 3){
+        return 0;
+    }
+    if (str[start] == '0' && tolower((int)str[start+1]) == 'x'){
+        i = start+2;
+        counter=2;
+
+        while ( isxdigit(((int)str[i])) != 0 ){
+            counter++;
+            i++;
+        }
+        if ( counter == 2 ){
+            return 0;
+        }
+    }
+
+    return counter;
+}
+
 int symbolCounter(char *str, int start){
     int counter = 0;
     int i = start;
@@ -16,13 +129,69 @@ int symbolCounter(char *str, int start){
 int wordCounter(char *str, int start){
     int counter = 0;
     int i = start;
-    while (isalnum(str[i]) != 0 && !isspace( (int)isalnum(str[i]))){
+    while (isalnum(str[i]) != 0 && !isspace( (int)isalnum(str[i])) ){
         i++;
         counter++;
     }
     return counter;
 }
 
+// Count all types of number symbols
+int numberTypeCounter( char *str, int start){
+    int counter = 0;
+    int i = start;
+    while (ishexnumber((int)str[i]) != 0 || tolower((int)str[i]) == 'x' || str[i] == '.' || str[i] == '-'){
+        i++;
+        counter++;
+    }
+    return counter;
+}
+
+// Doc return 0 if none invalid type, 1 Integer, 2 HexInteger, 3 float, 4 Octal
+int numberType(char *str, int start, int end){
+    int i = start;
+    // One character;
+    if (i == end ){
+        if (str[i] == '8' || str[i] == '9'){
+            return 1;
+        } else if ( isdigit((int)str[i] != 0)){
+            return 4;
+        }
+    }
+    for (int j = start+1; j < end; ++j) {
+        if (tolower((int)str[i]) == 'x'){
+            return 2;
+        }
+        if (str[j] == '.'){
+            return 3;
+        }
+        if ( str[start] == '0' && ( (int)(str[j]-'0') < 8 ) ){
+            return 4;
+        }
+    }
+    return 0;
+}
+
+char* isNumberType(int numberType){
+    switch (numberType) {
+        case 1:
+            return "decimal integer";
+            break;
+        case 2:
+            return "hexadecimal integer";
+            break;
+        case 3:
+            return "floating point";
+            break;
+        case 4:
+            return "octal integer";
+            break;
+        default:
+            return "error type";
+    }
+}
+
+// Allocate dynamic memory and get the substring from position a to b
 char* getSubstring(char const *str, int start, int end){
 
     int size = end - start;
@@ -161,10 +330,14 @@ char* isLongOperator(char* str) {
 
 void printArgumentsTest(char *str){
     printf("\nTEST\n");
+    printf("INPUT:");
     for (int i = 0; i < strlen(str); ++i) {
         printf("%c", str[i]);
     }
     printf("\n");
+    char *word = "m099";
+    int x = octalCounter(word,0);
+    printf("STRING:%s    c:%c    Size:%d\n",word, word[x], x);
 }
 
 int main( int argc, char **argv) {
@@ -185,13 +358,81 @@ int main( int argc, char **argv) {
 
     // Copy input to a local string
     strcpy(str, argv[1]);
-//    printf("%s", str);
 
     // Traverse the string
     for (int i = 0; i < size; ++i) {
 
-        //Check for a word
-        if ( (int)isalpha(str[i]) ){
+        if ( isdigit( (int)str[i] )) {
+            //printf("TEST Number %c\n", str[i]);
+
+            //printf("TEST SIZE NUMBER %d\n", n);
+
+            if (str[i] == '0') {
+                //printf("TEST Zero %c\n", str[i]);
+                // Check for hexadecimal integer
+                if ( hexadecimalCounter(str, i) ){
+                    int posEnd = hexadecimalCounter(str,i);
+                    char *operator;
+                    operator = isNumberType(2);
+                    char *floatNum = getSubstring(str,i,i+posEnd);
+                    printf("%s: \"%s\"\n", operator, floatNum);
+                    i = i+posEnd-1; // Relocate iterator location
+                    free(floatNum);
+                }
+                // Check for Float point
+                else if ( decimalFloatCounter(str, i) ){
+                    int posEnd = decimalFloatCounter(str,i);
+                    char *operator;
+                    operator = isNumberType(3);
+                    char *floatNum = getSubstring(str,i,i+posEnd);
+                    printf("%s: \"%s\"\n", operator, floatNum);
+                    i = i+posEnd-1; // Relocate iterator location
+                   free(floatNum);
+                }
+                // Check for octal integer
+                else if ( octalCounter(str, i) ){
+                    int posEnd = octalCounter(str,i);
+                    char *operator;
+                    operator = isNumberType(4);
+                    char *octalNum = getSubstring(str,i,i+posEnd);
+                    printf("%s: \"%s\"\n", operator, octalNum);
+                    i = i+posEnd-1; // Relocate iterator location
+                    free(octalNum);
+
+                } else{
+                    // Return an decimal integer
+                    int posEnd = decimalCounter(str,i);
+                    char *operator;
+                    operator = isNumberType(1);
+                    char *decimalNum = getSubstring(str,i,i+posEnd);
+                    printf("%s: \"%s\"\n", operator, decimalNum);
+                    i = i+posEnd-1; // Relocate iterator location
+                    free(decimalNum);
+                }
+            }
+            else if ( isdigit( (int)str[i]) ) {
+                //printf("Integer %c\n", str[i]);
+                if ( decimalFloatCounter(str, i) ){
+                    int posEnd = decimalFloatCounter(str,i);
+                    char *operator;
+                    operator = isNumberType(3);
+                    char *floatNum = getSubstring(str,i,i+posEnd);
+                    printf("%s: \"%s\"\n", operator, floatNum);
+                    i = i+posEnd-1; // Relocate iterator location
+                    free(floatNum);
+                } else{
+                    // Return an decimal integer
+                    int posEnd = decimalCounter(str,i);
+                    char *operator;
+                    operator = isNumberType(1);
+                    char *decimalNum = getSubstring(str,i,i+posEnd);
+                    printf("%s: \"%s\"\n", operator, decimalNum);
+                    i = i+posEnd-1; // Relocate iterator location
+                    free(decimalNum);
+                }
+
+            }
+        } else if ( (int)isalpha(str[i]) ){
 
             int n = wordCounter(str, i);
 
@@ -213,10 +454,6 @@ int main( int argc, char **argv) {
             printf("word: \"%s\"\n", word);
             i=n+i-1; // Relocate the iterator to next location
             free(word); // Free the memory
-
-        } else if ( isdigit( (int)str[i] )){
-            printf("Number %c\n", str[i]);
-
 
         } else if ( ispunct((str[i])) ){
             int n = symbolCounter(str,i);
@@ -254,14 +491,11 @@ int main( int argc, char **argv) {
         } else if ( isspace(str[i]) ){
 
         }
-
-
     }
 
     //For testing only
     printArgumentsTest(str);
     free(str);
-    printf("%s",isLongOperator("!="));
 
     return EXIT_SUCCESS;
 }
