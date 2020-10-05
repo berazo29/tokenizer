@@ -259,14 +259,14 @@ char* isLongOperator(char* str) {
         }else if(strcmp(str,"<<=")==0){
             return "shift left equals";
         }
-    }else if(strlen(str)==2){
-        if(str[1]=='>') {
+    }else if(strlen(str)==2) {
+        if (str[1] == '>') {
             if (strcmp(str, ">>") == 0) {
                 return "shift right";
             } else if (strcmp(str, "->") == 0) {
                 return "structure pointer";
             }
-        }else if(str[1]=='=') {
+        } else if (str[1] == '=') {
             if (strcmp(str, "==") == 0) {
                 return "equality test";
             } else if (strcmp(str, "!=") == 0) {
@@ -292,16 +292,20 @@ char* isLongOperator(char* str) {
             } else if (strcmp(str, "^=") == 0) {
                 return "bitwise XOR equals";
             }
-        }else if(strcmp(str,"<<")==0){
+        } else if (strcmp(str, "<<") == 0) {
             return "shift left";
-        }else if(strcmp(str,"++")==0){
+        } else if (strcmp(str, "++") == 0) {
             return "increment";
-        }else if(strcmp(str,"--")==0){
+        } else if (strcmp(str, "--") == 0) {
             return "decrement";
-        }else if(strcmp(str,"||")==0){
+        } else if (strcmp(str, "||") == 0) {
             return "logical OR";
-        }else if(strcmp(str,"&&")==0){
+        } else if (strcmp(str, "&&") == 0) {
             return "logical AND";
+        } else if (strcmp(str, "//") == 0) {
+            return "end";
+        } else if (strcmp(str, "/*") == 0) {
+            return "comment";
         }
     }
     return "bad token";
@@ -520,6 +524,21 @@ int main( int argc, char **argv) {
             if ( n == 2 ){
                 if ( strcmp(isLongOperator(word),"bad token") != 0 ){
                     operator = isLongOperator(word);
+                    if (strcmp(operator,"end")==0){
+                        i=(int)size;
+                        continue;
+                    }else if (strcmp(operator,"comment")==0){
+                        while(i<size){
+                            if(str[i]=='*'){
+                                if(str[i+1]=='/'){
+                                    i=i+2;
+                                    break;
+                                }
+                            }
+                            i++;
+                        }
+                        continue;
+                    }
                     printf("%s: \"%s\"\n", operator, word);
                     i = i+1;
                     free(word);
