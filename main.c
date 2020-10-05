@@ -169,8 +169,11 @@ char* isNumberType(int numberType){
 char* getSubstring(char const *str, int start, int end){
 
     int size = end - start;
+    char *tmp=(char *)calloc(size,sizeof(char*));
 
-    char tmp[size];
+    if(tmp[0]!='0'){
+        tmp=realloc(tmp, size);
+    }
 
     int k=0;
     for (int i = start; i < end; ++i) {
@@ -312,6 +315,77 @@ void printArgumentsTest(char *str){
     }
 }
 
+//checks for C keywords as tokens
+char* keywordscmp(char *word){
+    if (strcmp(word, "sizeof")==0){
+        return "sizeof";
+    }else if(strcmp(word, "auto")==0){
+        return "auto";
+    }else if(strcmp(word, "break")==0){
+        return "break";
+    }else if(strcmp(word, "case")==0){
+        return "case";
+    }else if(strcmp(word, "char")==0){
+        return "char";
+    }else if(strcmp(word, "const")==0){
+        return "const";
+    }else if(strcmp(word, "continue")==0){
+        return "continue";
+    }else if(strcmp(word, "default")==0){
+        return "default";
+    }else if(strcmp(word, "do")==0){
+        return "do";
+    }else if(strcmp(word, "double")==0){
+        return "double";
+    }else if(strcmp(word, "else")==0){
+        return "else";
+    }else if(strcmp(word, "enum")==0){
+        return "enum";
+    }else if(strcmp(word, "extern")==0){
+        return "extern";
+    }else if(strcmp(word, "float")==0){
+        return "float";
+    }else if(strcmp(word, "for")==0){
+        return "for";
+    }else if(strcmp(word, "goto")==0){
+        return "goto";
+    }else if(strcmp(word, "if")==0){
+        return "if";
+    }else if(strcmp(word, "int")==0){
+        return "int";
+    }else if(strcmp(word, "long")==0){
+        return "long";
+    }else if(strcmp(word, "register")==0){
+        return "register";
+    }else if(strcmp(word, "return")==0){
+        return "long";
+    }else if(strcmp(word, "struct")==0){
+        return "struct";
+    }else if(strcmp(word, "switch")==0){
+        return "switch";
+    }else if(strcmp(word, "typedef")==0){
+        return "typedef";
+    }else if(strcmp(word, "union")==0){
+        return "union";
+    }else if(strcmp(word, "signed")==0){
+        return "signed";
+    }else if(strcmp(word, "void")==0){
+        return "void";
+    }else if(strcmp(word, "static")==0){
+        return "static";
+    }else if(strcmp(word, "while")==0){
+        return "while";
+    }else if(strcmp(word, "volatile")==0){
+        return "volatile";
+    }else if(strcmp(word, "short")==0){
+        return "short";
+    }else if(strcmp(word, "unsigned")==0) {
+        return "unsigned";
+    }
+    return "00";
+}
+
+
 int main( int argc, char **argv) {
 
     //Check the argument input
@@ -348,6 +422,7 @@ int main( int argc, char **argv) {
                     char *hexNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, hexNum);
                     i = i+posEnd-1; // Relocate iterator location
+                    free(hexNum);
                 }
                 // Check for Float point
                 else if ( decimalFloatCounter(str, i) ){
@@ -357,6 +432,7 @@ int main( int argc, char **argv) {
                     char *floatNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, floatNum);
                     i = i+posEnd-1; // Relocate iterator location
+                    free(floatNum);
                 }
                 // Check for octal integer
                 else if ( octalCounter(str, i) ){
@@ -366,6 +442,7 @@ int main( int argc, char **argv) {
                     char *octalNum = getSubstring(str,i,posEnd);
                     printf("%s: \"%s\"\n", operator, octalNum);
                     i = posEnd-1; // Relocate iterator location
+                    free(octalNum);
                 } else{
                     // Return an decimal integer
                     int posEnd = decimalCounter(str,i);
@@ -374,6 +451,7 @@ int main( int argc, char **argv) {
                     char *decimalNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, decimalNum);
                     i = i+posEnd-1; // Relocate iterator location
+                    free(decimalNum);
                 }
             }else if ( isdigit( (int)str[i]) ) {
                 //printf("Integer %c\n", str[i]);
@@ -384,6 +462,7 @@ int main( int argc, char **argv) {
                     char *floatNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, floatNum);
                     i = i+posEnd-1; // Relocate iterator location
+                    free(floatNum);
                 } else{
                     // Return an decimal integer
                     int posEnd = decimalCounter(str,i);
@@ -392,6 +471,7 @@ int main( int argc, char **argv) {
                     char *decimalNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, decimalNum);
                     i = i+posEnd-1; // Relocate iterator location
+                    free(decimalNum);
                 }
 
             }
@@ -406,17 +486,18 @@ int main( int argc, char **argv) {
             }
             //printf("SIZE %d\n",n);
             char *word = getSubstring(str,i,i+n);
-
-            // Check if sizeof exist and continue;
-            if ( strcmp(word,"sizeof") == 0 ){
-                printf("sizeof: \"%s\"\n", word);
+            char *answer= keywordscmp(word);
+            // Check if keyword exist and continue;
+            if(strcmp(answer,"00")!=0){
+                printf("%s: \"%s\"\n", answer, word);
                 i=n+i-1; // Relocate the iterator to next location
-
+                free(word);
                 continue;
             }
+
             printf("word: \"%s\"\n", word);
             i=n+i-1; // Relocate the iterator to next location
-
+            free(word);
 
         } else if ( ispunct((str[i])) ){
             int n = symbolCounter(str,i);
@@ -430,6 +511,7 @@ int main( int argc, char **argv) {
                     operator = isLongOperator(word);
                     printf("%s: \"%s\"\n", operator, word);
                     i = i+2;
+                    free(word);
                     continue;
                 }
                 n--;
@@ -440,6 +522,7 @@ int main( int argc, char **argv) {
                     operator = isLongOperator(word);
                     printf("%s: \"%s\"\n", operator, word);
                     i = i+1;
+                    free(word);
                     continue;
                 }
             }
