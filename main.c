@@ -136,6 +136,16 @@ int wordCounter(char *str, int start){
     return counter;
 }
 
+int numberTypeCounter( char *str, int start){
+    int counter = 0;
+    int i = start;
+    while (ishexnumber((int)str[i]) != 0 || tolower((int)str[i]) == 'x' || str[i] == '.' || str[i] == '-'){
+        i++;
+        counter++;
+    }
+    return counter;
+}
+
 char* isNumberType(int numberType){
     switch (numberType) {
         case 1:
@@ -161,6 +171,7 @@ char* getSubstring(char const *str, int start, int end){
     int size = end - start;
 
     char *tmp = (char *)malloc(size*sizeof(char *));
+
     int k=0;
     for (int i = start; i < end; ++i) {
         tmp[k] = str[i];
@@ -325,6 +336,8 @@ int main( int argc, char **argv) {
 
         if ( isdigit( (int)str[i] )) {
 
+            int x = numberTypeCounter(str,i);
+
             if (str[i] == '0') {
 
                 // Check for hexadecimal integer
@@ -352,7 +365,7 @@ int main( int argc, char **argv) {
                     int posEnd = octalCounter(str,i)+i;
                     char *operator;
                     operator = isNumberType(4);
-                    char *octalNum = getSubstring(str,i,posEnd+1);
+                    char *octalNum = getSubstring(str,i,posEnd);
                     printf("%s: \"%s\"\n", operator, octalNum);
                     i = posEnd-1; // Relocate iterator location
                     free(octalNum);
@@ -428,8 +441,7 @@ int main( int argc, char **argv) {
                     continue;
                 }
                 n--;
-                word = realloc(word, i+n);
-                //word = getSubstring(str,i,i+n);
+                word = getSubstring(str,i,i+n);
             }
             if ( n == 2 ){
                 if ( strcmp(isLongOperator(word),"bad token") != 0 ){
