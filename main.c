@@ -170,7 +170,7 @@ char* getSubstring(char const *str, int start, int end){
 
     int size = end - start;
 
-    char *tmp = (char *)malloc(size*sizeof(char *));
+    char tmp[size];
 
     int k=0;
     for (int i = start; i < end; ++i) {
@@ -348,7 +348,6 @@ int main( int argc, char **argv) {
                     char *hexNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, hexNum);
                     i = i+posEnd-1; // Relocate iterator location
-                    free(hexNum);
                 }
                 // Check for Float point
                 else if ( decimalFloatCounter(str, i) ){
@@ -358,7 +357,6 @@ int main( int argc, char **argv) {
                     char *floatNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, floatNum);
                     i = i+posEnd-1; // Relocate iterator location
-                   free(floatNum);
                 }
                 // Check for octal integer
                 else if ( octalCounter(str, i) ){
@@ -368,8 +366,6 @@ int main( int argc, char **argv) {
                     char *octalNum = getSubstring(str,i,posEnd);
                     printf("%s: \"%s\"\n", operator, octalNum);
                     i = posEnd-1; // Relocate iterator location
-                    free(octalNum);
-
                 } else{
                     // Return an decimal integer
                     int posEnd = decimalCounter(str,i);
@@ -378,7 +374,6 @@ int main( int argc, char **argv) {
                     char *decimalNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, decimalNum);
                     i = i+posEnd-1; // Relocate iterator location
-                    free(decimalNum);
                 }
             }else if ( isdigit( (int)str[i]) ) {
                 //printf("Integer %c\n", str[i]);
@@ -389,7 +384,6 @@ int main( int argc, char **argv) {
                     char *floatNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, floatNum);
                     i = i+posEnd-1; // Relocate iterator location
-                    free(floatNum);
                 } else{
                     // Return an decimal integer
                     int posEnd = decimalCounter(str,i);
@@ -398,7 +392,6 @@ int main( int argc, char **argv) {
                     char *decimalNum = getSubstring(str,i,i+posEnd);
                     printf("%s: \"%s\"\n", operator, decimalNum);
                     i = i+posEnd-1; // Relocate iterator location
-                    free(decimalNum);
                 }
 
             }
@@ -418,12 +411,12 @@ int main( int argc, char **argv) {
             if ( strcmp(word,"sizeof") == 0 ){
                 printf("sizeof: \"%s\"\n", word);
                 i=n+i-1; // Relocate the iterator to next location
-                free(word);
+
                 continue;
             }
             printf("word: \"%s\"\n", word);
             i=n+i-1; // Relocate the iterator to next location
-            free(word); // Free the memory
+
 
         } else if ( ispunct((str[i])) ){
             int n = symbolCounter(str,i);
@@ -437,7 +430,6 @@ int main( int argc, char **argv) {
                     operator = isLongOperator(word);
                     printf("%s: \"%s\"\n", operator, word);
                     i = i+2;
-                    free(word);
                     continue;
                 }
                 n--;
@@ -448,7 +440,6 @@ int main( int argc, char **argv) {
                     operator = isLongOperator(word);
                     printf("%s: \"%s\"\n", operator, word);
                     i = i+1;
-                    free(word);
                     continue;
                 }
             }
