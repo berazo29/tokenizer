@@ -139,7 +139,7 @@ int wordCounter(char *str, int start){
 int numberTypeCounter( char *str, int start){
     int counter = 0;
     int i = start;
-    while (ishexnumber((int)str[i]) != 0 || tolower((int)str[i]) == 'x' || str[i] == '.' || str[i] == '-'){
+    while (isxdigit((int)str[i]) != 0 || tolower((int)str[i]) == 'x' || str[i] == '.' || str[i] == '-'){
         i++;
         counter++;
     }
