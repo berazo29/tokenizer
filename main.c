@@ -358,7 +358,7 @@ char* keywordscmp(char *word){
     }else if(strcmp(word, "register")==0){
         return "register";
     }else if(strcmp(word, "return")==0){
-        return "long";
+        return "return";
     }else if(strcmp(word, "struct")==0){
         return "struct";
     }else if(strcmp(word, "switch")==0){

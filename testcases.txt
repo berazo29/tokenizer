@@ -13,8 +13,7 @@ Tokenizer string: string [] tes0
 word: string
 left bracket: [
 right bracket: ]
-word: tes
-Decimal integer: 0
+word: tes0
 
 Tokenizer string: 0x70 (tokenizer)
 hexadecimal: 0x70
