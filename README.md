@@ -26,7 +26,7 @@ you can pass any string as argument.
 
 *Example:*
 ```
-./Tokenizer 123+++=+
+./tokenizer 123+++=+
 ```
 *Output:*
 ```
