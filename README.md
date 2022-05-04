@@ -21,7 +21,7 @@ python build.py
 
 ## Usage
 
-Inside the folder `build` there is the executable `Tokenizer`, 
+Inside the folder `build` there is the executable `tokenizer`, 
 you can pass any string as argument.
 
 *Example:*
