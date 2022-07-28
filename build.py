@@ -55,3 +55,4 @@ if __name__ == '__main__':
             exit(0)
 
     print('Built fail.')
+    exit(1)
