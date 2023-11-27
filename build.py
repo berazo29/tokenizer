@@ -34,9 +34,9 @@ def build():
         logging.info('Create {} directory'.format(p))
         os.mkdir(p)
         logging.info('Execute cmake command')
-        comamnd = 'cd {} && cmake .. && cmake --build ./'.format(target)
-        logging.info('Command: {}'.format(comamnd))
-        n = os.system(comamnd)
+        command = 'cd {} && cmake .. && cmake --build ./'.format(target)
+        logging.info('Command: {}'.format(command))
+        n = os.system(command)
         if n != 0:
             raise(n)
         logging.info('Executable at {}'.format(p))
