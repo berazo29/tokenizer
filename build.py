@@ -1,7 +1,7 @@
 import os
-from sys import path
 import shutil
 from typing import List
+import logging
 
 def check_requirements(requires: List[str]) -> bool:
 
@@ -17,7 +17,7 @@ def check_requirements(requires: List[str]) -> bool:
 
     req = _chech_requirements(requires)
     if len(req) != 0:
-        print('Please install the following tool/s {}'.format(req))
+        logging.error('Please install the following tool/s {}'.format(req))
         return False
     return True
 
@@ -28,31 +28,38 @@ def build():
     status = False
     try:
         if os.path.isdir(p):
-            print('Delete {}'.format(p))
+            logging.warning('Directory {} already exist'.format(p))
+            logging.warning('Delete {} directory'.format(p))
             shutil.rmtree(p)
-        print('Create {}'.format(p))
+        logging.info('Create {} directory'.format(p))
         os.mkdir(p)
-        print('Generate {} directory'.format(target))
-        n = os.system('cd {} && cmake .. && cmake --build .'.format(target))
+        logging.info('Execute cmake command')
+        comamnd = 'cd {} && cmake .. && cmake --build ./'.format(target)
+        logging.info('Command: {}'.format(comamnd))
+        n = os.system(comamnd)
         if n != 0:
             raise(n)
-        print('Executable at {}'.format(p))
+        logging.info('Executable at {}'.format(p))
         status = True
     except:
-        print('Error encounter. Cleaning {} directory...'.format(p))
+        logging.error('Error encounter. Cleaning {} directory...'.format(p))
         if os.path.isdir(p):
-            print('Delete {}'.format(p))
+            logging.info('Delete {}'.format(p))
             shutil.rmtree(p)
     finally:
         return status
 
 if __name__ == '__main__':
     requires = ['cmake']
-    if check_requirements(requires):
-        print('Building...')
-        if build():
-            print('Built successfully.')
-            exit(0)
-
-    print('Built fail.')
+    logging.basicConfig(level=logging.INFO  , format='%(asctime)s - %(levelname)-8s - %(message)s')
+    logging.info('Checking requirements... [requires: {}]'.format(requires))
+    if not check_requirements(requires):
+        logging.error('Requirements not satisfied')
+        exit(1)
+    logging.info('Requirements satisfied')
+    logging.info('Build started...')
+    if build():
+        logging.info('Build successfully completed')
+        exit(0)
+    logging.error('Build failed.')
     exit(1)
